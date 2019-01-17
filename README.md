@@ -1,15 +1,15 @@
-# 车八戒桌面版（electron版本）
+# electron桌面容器
 
-**使用electron builder 打包.**
+** 使用electron builder 打包.**
 
 
 ## 如何使用
 
 ```bash
 # Clone this repository
-git clone http://git.mys4s.cn/client/elcar8.git
+git clone https://github.com/charsunny/desktop.git
 # Go into the repository
-cd elcar8
+cd desktop
 # Install dependencies
 npm install
 # Run the app
