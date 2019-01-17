@@ -1,0 +1,90 @@
+p {
+    font-size: 20px;
+}
+.wrapper {
+    overflow: hidden;
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+.a4-wrapper {
+    width: 800px;
+}
+.a4-shop-name {
+    font-weight: 400;
+    font-size: 50px;
+    text-align: center;
+    margin-top: 30px;
+}
+.a4-item {
+    text-align: center;
+    width: 50%;
+    display: inline-block;
+    margin: 20px 0;
+}
+.a4-table {
+    margin: 30px;
+    width: 740px;
+}
+.a4-total {
+    text-align: right;
+    margin-right: 30px;
+}
+.a4-foot-wrapper {
+    margin: 30px;
+}
+.a4-foot-text {
+    width: 50%;
+    display: inline-block;
+}
+.a4-signature {
+    margin-left: 30px;
+}
+.receipt-wrapper {
+    width: 300px;
+    box-sizing: border-box;
+}
+.receipt-shop-name {
+    font-weight: 400;
+    font-size: 20px;
+    text-align: center;
+    margin-top: 30px;
+}
+.receipt-divide {
+    border-bottom: 1px solid #e5e5e5;
+    margin: 0 10px;
+}
+.receipt-item {
+    font-size: 16px;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+.receipt-table {
+    margin: 10px;
+    width: 260px;
+}
+.receipt-foot-wrapper {
+    margin: 10px;
+}
+.receipt-foot-text {
+    font-size: 16px;
+    width: 50%;
+    display: inline-block;
+}
+.receipt-foot-text-line {
+    font-size: 16px;
+}
+.receipt-signature {
+    margin-left: 10px;
+    font-size: 18px;
+    margin-top: 10px;
+}
+.code {
+    width: 200px;
+    margin: 20px auto;
+}
+.codeExtra {
+    text-align: center;
+}
+.qrcode {
+    margin: 20px 40px;
+}

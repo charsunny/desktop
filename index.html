@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>page</title>
+    <link href="./index.css" type="text/css" rel="stylesheet" />
+  </head>
+  <body>
+      <div id='root' class='wrapper'>
+      </div>
+    <script src="https://apps.bdimg.com/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js" type="text/javascript" ></script>
+    <link href="https://apps.bdimg.com/libs/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        // type == 1 A4; type == 2 receipt
+        $(document).ready(function() {
+            const {ipcRenderer} = require('electron')
+            ipcRenderer.on('senddata', (event, arg) => {
+                const orderDetail = arg.data 
+                const type = arg.type // 根据传递来的参数，设置页面打印内容以及打印输出
+                console.log(orderDetail,type)
+                ipcRenderer.send('printdata', arg)
+                const root = $('#root')
+                type == 1 ? root.addClass('a4-wrapper') : root.addClass('receipt-wrapper')
+                const shopName = `<h1>${orderDetail.shopName}</h1>`
+                const itemList = orderDetail.Data && orderDetail.Data.ItemList || []
+                let count = 0
+                itemList.map(res => {
+                    count += res.BuyCount
+                    if(res.SubItems && res.SubItems.length > 0) {
+                        res.SubItems.map(subRes => {
+                            count += subRes.BuyCount
+                        })
+                    }
+                })
+                const detail = [
+                    `<p>车牌号：${orderDetail.CarNo || ''}</p>`,
+                    `<p>车型：${orderDetail.Model || ''}</p>`,
+                    `<p>手机号：${orderDetail.GuestPhone || ''}</p>`,
+                    `<p>日期：${orderDetail.CreateTime || ''}</p>`
+                ]
+                let tr = "<tr><th>项目</th><th>类型</th><th>单价(元)</th><th>数量</th><th>金额(元)</th></tr>"
+                    itemList.map(res => {
+                        tr += `<tr><th>${res.GoodsName}</th><th>${res.Type == 1 ? '服务' : '配件'}</th><th>${res.CartPrice / 100}</th><th>${res.BuyCount}</th><th>${res.BuyPrice / 100}</th></tr>`
+                        if(res.SubItems && res.SubItems.length > 0) {
+                            res.SubItems.map(subRes => {
+                                tr += `<tr class="info"><th>${subRes.GoodsName}</th><th>${ subRes.Type == 1 ? '服务' : '配件'}</th><th>${ subRes.CartPrice / 100}</th><th>${ subRes.BuyCount}</th><th>${subRes.BuyPrice / 100}</th></tr>`
+                            })
+                        }
+                    })
+                if(type == 1) {
+                    root.append($(shopName).addClass('a4-shop-name'))
+                    for(let i = 0; i < detail.length; i ++) {
+                        root.append($(detail[i]).addClass('a4-item'))
+                    }
+                    const table = `<table class="table table-bordered a4-table">${tr}</table>`
+                    const totalAmount = `<p class="a4-total">合计：${orderDetail.BuyerPayAmount / 100}元</p>`
+                    const shopAndCreateUser = `<div class="a4-foot-wrapper"><p class="a4-foot-text ">维修单位：${orderDetail.shopName}</p><p class="a4-foot-text">制表人：${orderDetail && orderDetail.Data && orderDetail.Data.CreateSUserName || ''}</p></div>`
+                    const addressAndTel = `<div class="a4-foot-wrapper"><p class="a4-foot-text ">地址：${orderDetail.shopAddress}</p><p class="a4-foot-text">电话：${orderDetail.shopTel}</p></div>`
+                    const signature= "<h3 class='a4-signature'>顾客签字：</h3>"
+                    root.append(table, totalAmount, shopAndCreateUser, addressAndTel, signature)
+                }
+                if(type == 2) {
+                    const divide = '<div class="receipt-divide"></div>'
+                    root.append($(shopName).addClass('receipt-shop-name'), divide)
+                    for(let i = 0; i < detail.length; i ++) {
+                        root.append($(detail[i]).addClass('receipt-item'))
+                    }
+                    const table = `<table class="table receipt-table">${tr}</table>`
+                    const countAndAmount = `<div class="receipt-foot-wrapper"><p class="receipt-foot-text ">总件数：${count}</p><p class="receipt-foot-text">总计：${orderDetail.TotalAmount / 100}元</p></div>`
+                    const discountAndBuyAmount = `<div class="receipt-foot-wrapper"><p class="receipt-foot-text ">优惠金额：${(orderDetail.DiscountAmount + orderDetail.CouponAmount) / 100 || 0}</p><p class="receipt-foot-text">实收金额：${orderDetail.TotalAmount / 100}元</p></div>`
+                    const addressAndTel = `<div class="receipt-foot-wrapper"><p class="receipt-foot-text-line ">地址：${orderDetail.shopAddress}</p><p class="receipt-foot-text-line">电话：${orderDetail.shopTel}</p></div>`
+                    const signature= "<p class='receipt-signature'>顾客签名：</p>"
+                    const code = "<div id='code' class='code'></div>"
+                    const codeExtra = "<p class='codeExtra'>扫码领取会员卡</p>"
+                    root.append(table, divide, countAndAmount, discountAndBuyAmount, divide, addressAndTel, divide, signature, code)
+                    $('#code').qrcode({
+                        // render: 'table',
+                        height: 200,
+                        width: 200,
+                        text: `https://mys4s.cn/fr/${orderDetail.ShopId}`
+                    }) 
+                    const canvas = $('#code canvas')[0]
+                    const img = convertCanvasToImage(canvas); 
+                    root.append(img, codeExtra)
+                    $('#code').hide()
+        
+                }
+                function convertCanvasToImage(canvas) {  
+                    console.log(canvas)
+                    var image = new Image();  
+                    image.src = canvas.toDataURL("image/png");
+                    $(image).addClass('qrcode')
+                    return image;  
+                }
+            })
+        })
+      // You can also require other files to run in this process
+      require('./renderer.js')
+    </script>
+  </body>
+</html>

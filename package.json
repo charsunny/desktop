@@ -1,0 +1,44 @@
+{
+  "name": "car8j",
+  "version": "1.0.0",
+  "description": "car8j desktop",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "pack:win" : "electron-builder --dir -w",
+    "dist:win" : "electron-builder -w",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "com.charsunny.desktop",
+    "productName": "desktop",
+    "copyright": "2018 © charsunny",
+    "mac": {
+      "category": "com.charsunny.desktop"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "extraResources": [
+      "./iconTemplate.png",
+      "./iconTemplate@2x.png"
+    ]
+  },
+  "repository": "https://github.com/charsunny/desktop.git",
+  "author": "charsunny",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^3.0.7",
+    "electron-builder": "^20.38.3"
+  }
+}
